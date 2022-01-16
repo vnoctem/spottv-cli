@@ -1,0 +1,11 @@
+{
+  "project_id": "spottv-4a6f2",
+  "device_model_id": "spottv-4a6f2-chromecast-google-tv",
+  "manifest": {
+    "manufacturer": "Google",
+    "product_name": "Chromecast with Google TV",
+    "device_description": "Basement TV"
+  },
+  "device_type": "action.devices.types.TV",
+  "traits": ["action.devices.traits.OnOff"]
+}

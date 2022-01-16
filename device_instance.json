@@ -1,0 +1,6 @@
+{
+    "id": "chromecast-device",
+    "model_id": "spottv-4a6f2-chromecast-google-tv",
+    "nickname": "My Chromecast with Google TV",
+    "client_type": "SDK_LIBRARY"
+}
