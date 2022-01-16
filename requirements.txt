@@ -1,0 +1,12 @@
+certifi==2021.10.8
+charset-normalizer==2.0.10
+click==8.0.3
+google-assistant-grpc==0.3.0
+googleapis-common-protos==1.54.0
+grpcio==1.43.0
+idna==3.3
+protobuf==3.19.3
+requests==2.27.1
+six==1.16.0
+spotipy==2.19.0
+urllib3==1.26.8
