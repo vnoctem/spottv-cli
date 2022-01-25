@@ -38,7 +38,10 @@ def cli(ctx, device_model_id, device_id):
 
 @cli.command()
 @click.pass_obj
-def launch(settings):
+def on(settings):
+    """
+    Turn on TV and launch Spotify app
+    """
     send_text_query('open Spotify', settings['device_model_id'], settings['device_id'])
     play(spotify_uri='')
 
@@ -46,6 +49,9 @@ def launch(settings):
 @cli.command()
 @click.pass_obj
 def off(settings):
+    """
+    Turn off TV
+    """
     send_text_query('turn off TV', settings['device_model_id'], settings['device_id'])
 
 
