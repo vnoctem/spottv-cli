@@ -18,25 +18,14 @@ SCOPE = 'user-read-playback-state user-modify-playback-state'
 
 
 @click.group()
-@click.option('--device-model-id',
-              metavar='<device model id>',
-              required=True,
-              help=(('Unique device model identifier, '
-                     'if not specified, it is read from --device-config')))
-@click.option('--device-id',
-              metavar='<device id>',
-              required=True,
-              help=(('Unique registered device instance identifier, '
-                     'if not specified, it is read from --device-config, '
-                     'if no device_config found: a new device is registered '
-                     'using a unique id and a new device config is saved')))
 @click.pass_context
-def cli(ctx, device_model_id, device_id):
-    ctx.obj['device_model_id'] = device_model_id
-    ctx.obj['device_id'] = device_id
+def spottv(ctx):
+    click.echo(ctx)
+    # ctx.obj['device_model_id'] = device_model_id
+    # ctx.obj['device_id'] = device_id
 
 
-@cli.command()
+@spottv.command()
 @click.pass_obj
 def on(settings):
     """
@@ -46,7 +35,7 @@ def on(settings):
     play(spotify_uri='')
 
 
-@cli.command()
+@spottv.command()
 @click.pass_obj
 def off(settings):
     """
@@ -55,7 +44,16 @@ def off(settings):
     send_text_query('turn off TV', settings['device_model_id'], settings['device_id'])
 
 
-@cli.command()
+@spottv.command()
+@click.pass_obj
+def play(settings):
+    """
+    Turn off TV
+    """
+    send_text_query('turn off TV', settings['device_model_id'], settings['device_id'])
+
+
+@spottv.command()
 @click.option('--api-endpoint', default=ASSISTANT_API_ENDPOINT,
               metavar='<api endpoint>', show_default=True,
               help='Address of Google Assistant API service.')
@@ -82,8 +80,7 @@ def send(settings, api_endpoint, credentials, lang, verbose,
     # Load OAuth 2.0 credentials.
     try:
         with open(credentials, 'r') as f:
-            credentials = google.oauth2.credentials.Credentials(token=None,
-                                                                **json.load(f))
+            credentials = google.oauth2.credentials.Credentials(token=None, **json.load(f))
             http_request = google.auth.transport.requests.Request()
             credentials.refresh(http_request)
     except Exception as e:
@@ -102,7 +99,10 @@ def send(settings, api_endpoint, credentials, lang, verbose,
         assistant.assist(text_query='open Spotify')
 
 
-def play(spotify_uri):
+def play_spotify_uri(spotify_uri):
+    """
+
+    """
     spotify_controller = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
     devices = spotify_controller.devices()
     chromecast = None
@@ -110,6 +110,7 @@ def play(spotify_uri):
     if not devices:
         click.echo('No device found')
     else:
+        click.echo(devices)
         for device in devices['devices']:
             if device['type'] == 'TV':
                 chromecast = device
@@ -133,10 +134,10 @@ def play(spotify_uri):
 def send_text_query(text_query, device_model_id, device_id):
     """Send a text query to specified device
 
-     Args:
-      text_query (str): text query to send (equivalent of a typed voice command).
-      device_model_id (str): identifier of the device model.
-      device_id (str): identifier of the registered device instance.
+    Args:
+        text_query (str): text query to send (equivalent of a typed voice command).
+        device_model_id (str): identifier of the device model.
+        device_id (str): identifier of the registered device instance.
     """
 
     credentials = os.path.join(click.get_app_dir('google-oauthlib-tool'), 'credentials.json')
@@ -154,6 +155,11 @@ def send_text_query(text_query, device_model_id, device_id):
         logging.error('Error loading credentials: %s', e)
         logging.error('Run google-oauthlib-tool to initialize '
                       'new OAuth 2.0 credentials.')
+        logging.error('google-oauthlib-tool '
+                      '--client-secrets client_secret_811734406476-tvp38peele577b6dfv7roigsdf727tog.apps'
+                      '.googleusercontent.com.json '
+                      '--scope https://www.googleapis.com/auth/assistant-sdk-prototype '
+                      '--save --headless')
         return
 
     # Create an authorized gRPC channel.
@@ -175,8 +181,24 @@ def send_text_query(text_query, device_model_id, device_id):
         assistant.assist(text_query=text_query)
 
 
+def get_device_info():
+    device_info = {}
+
+    file = open('device_model.json')
+    model_data = json.load(file)
+    device_info['device_model_id'] = model_data['device_model_id']
+    file.close()
+
+    file = open('device_instance.json')
+    instance_data = json.load(file)
+    device_info['device_model_id'] = instance_data['id']
+    file.close()
+
+    return device_info
+
+
 def main():
-    cli(obj={})
+    return spottv(obj=get_device_info())
 
 
 if __name__ == '__main__':
