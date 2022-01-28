@@ -248,3 +248,7 @@ About
 
 # IDEA config files
 .idea/
+
+#
+device*.json
+client_secret*.json

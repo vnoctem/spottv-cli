@@ -55,12 +55,12 @@ def workout(settings):
     Play workout playlist
     """
     send_text_query('turn on Google TV', settings['device_model_id'], settings['device_id'])
-    play_spotify_uri('37i9dQZF1DXdxcBWuJkbcy')
+    play_spotify_uri('https://open.spotify.com/playlist/5ASA1KRegpZyg7S89PFEdR?si=2b2d07452dab4957')
 
 
 def play_spotify_uri(spotify_uri):
     """
-
+    Start playback of Spotify URI
     """
     spotify_controller = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
     devices = spotify_controller.devices()
@@ -87,7 +87,7 @@ def play_spotify_uri(spotify_uri):
             click.echo(f"Starting playback of '{playlist_name}' on {chromecast_name}...")
             # spotify_controller.shuffle(True, chromecast_id)
             spotify_controller.start_playback(device_id=chromecast_id,
-                                              context_uri='37i9dQZF1DXdxcBWuJkbcy')
+                                              context_uri=spotify_uri)
 
 
 def send_text_query(text_query, device_model_id, device_id):
