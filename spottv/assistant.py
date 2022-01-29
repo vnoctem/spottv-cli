@@ -75,8 +75,11 @@ class Assistant:
             click.echo("test test")
             if resp.screen_out.data:
                 html_response = resp.screen_out.data
+                click.echo("test1")
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
                 self.conversation_state = conversation_state
+                click.echo("test2")
             if resp.dialog_state_out.supplemental_display_text:
                 text_response = resp.dialog_state_out.supplemental_display_text
+                click.echo("test3")
