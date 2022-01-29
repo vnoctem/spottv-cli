@@ -42,20 +42,33 @@ def off(settings):
     send_text_query('turn off TV', settings['device_model_id'], settings['device_id'])
 
 
-@spottv.group()
+@spottv.command()
+@click.argument('playlist_name')
 @click.pass_obj
-def play(settings):
-    return
-
-
-@play.command()
-@click.pass_obj
-def workout(settings):
+def play(settings, playlist_name):
     """
-    Play workout playlist
+    Play a playlist defined in config.json
+    Args:
+        settings: Device info
+        playlist_name: Name of the playlist
     """
+    file = open('config.json')
+    config_data = json.load(file)
+    spotify_uri = config_data['playlists'][playlist_name]
+    file.close()
+
     send_text_query('turn on Google TV', settings['device_model_id'], settings['device_id'])
-    play_spotify_uri('https://open.spotify.com/playlist/5ASA1KRegpZyg7S89PFEdR?si=2b2d07452dab4957')
+    play_spotify_uri(spotify_uri)
+
+
+# @play.command()
+# @click.pass_obj
+# def workout(settings):
+#     """
+#     Play workout playlist
+#     """
+#     send_text_query('turn on Google TV', settings['device_model_id'], settings['device_id'])
+#     play_spotify_uri('https://open.spotify.com/playlist/5ASA1KRegpZyg7S89PFEdR?si=2b2d07452dab4957')
 
 
 def play_spotify_uri(spotify_uri):
@@ -63,6 +76,7 @@ def play_spotify_uri(spotify_uri):
     Start playback of Spotify URI
     """
     spotify_controller = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE))
+
     devices = spotify_controller.devices()
     chromecast = None
 
